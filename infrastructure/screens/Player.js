@@ -1,5 +1,5 @@
 import { Dimensions, StyleSheet, Text, View } from 'react-native'
-import React, { useContext, useEffect } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import FocusedStatusBar from '../components/FocusedStatusBar';
 import { StatusBar } from 'expo-status-bar';
 import { Theme } from '../components/Theme';
@@ -8,12 +8,13 @@ import Slider from '@react-native-community/slider';
 import { PlayerButton } from '../components/PlayerButton';
 import { AudioContext } from '../../Globals/AppProvider';
 import { changeAudio, pause, play, playNext, resume, selectAudio } from '../components/AudioContoller';
-import { storeAudioForNextOpening } from '../components/Helper,';
+import { convertTime, storeAudioForNextOpening } from '../components/Helper,';
 
 export const Player = () => {
 
   const context = useContext(AudioContext);
   const { playbackPosition, playbackDuration} = context;
+  const [currentPosition, setCurrentPosition] = useState(0);
 
   const calculateSlekBar = () => {
     if(playbackPosition !== null && playbackDuration !== null){
@@ -143,6 +144,11 @@ export const Player = () => {
     //  storeAudioForNextOpening(audio, index);
   }
 
+  const renderCurrentTime = () => {
+    return convertTime(context.playbackPosition / 1000);
+  }
+
+
   if(!context.currentAudio) return null;
   return (
     <>
@@ -154,6 +160,10 @@ export const Player = () => {
       </View>
       <View style={styles.audioPlayerContainer}>
           <Text numberOfLines={1} style={styles.audioTitle}>{context.currentAudio.filename}</Text>
+          <View style={{flexDirection:"row", justifyContent:"space-between", paddingHorizontal:10}}>
+            <Text>{convertTime(context.currentAudio.duration)}</Text>
+            <Text>{currentPosition ? currentPosition : renderCurrentTime()}</Text>
+          </View>
           <Slider
             style={{width: width, height: 40}} 
             minimumValue={0}
@@ -161,6 +171,28 @@ export const Player = () => {
             value={calculateSlekBar()}
             minimumTrackTintColor={Theme.FONT_MEDIUM} 
             maximumTrackTintColor={Theme.ACTIVE_BG}
+            onValueChange={(value) => {  
+              setCurrentPosition(convertTime(value * context.currentAudio.duration))
+             }}
+             onSlidingStart={async() => {
+                if(!context.isPlaying) return;
+                try {
+                  await pause(context.playbackObj);
+                } catch (error) {
+                  console.log("error inside onsliding start function", error)
+                  
+                }
+             }}
+             onSlidingComplete={async(value) => {
+              if(context.soundObj === null) return;
+
+              try {
+                const status = zawait context.playbackObj.setPositionAsync(Math.floor(context.soundObj.durationMillis * value))
+              } catch (error) {
+                console.log("error inside onsliding complete function", error)
+
+              }
+             }}
           />
           <View style={styles.audioControllers}>
             <PlayerButton iconType="PREV" onPress={handlePrevious}/>

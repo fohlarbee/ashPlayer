@@ -6,7 +6,7 @@ export const play = async(playbackObj, uri) =>{
     try {
         return await playbackObj.loadAsync(
             {uri},
-            {shouldPlay:true}
+            {shouldPlay:true, progressUpdateIntervalMillis: 100}
         )
     } catch (error) {
         console.log("error inside play method", error.message)
