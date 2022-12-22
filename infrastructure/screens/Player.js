@@ -187,7 +187,7 @@ export const Player = () => {
               if(context.soundObj === null) return;
 
               try {
-                const status = zawait context.playbackObj.setPositionAsync(Math.floor(context.soundObj.durationMillis * value))
+                const status = await context.playbackObj.setPositionAsync(Math.floor(context.soundObj.durationMillis * value))
               } catch (error) {
                 console.log("error inside onsliding complete function", error)
 

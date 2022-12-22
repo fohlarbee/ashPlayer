@@ -7,13 +7,19 @@ export default function PlayListModalInput({visible, onCloseModal, onSubmit}) {
     const [playlistName, setPlaylistName] = useState("");
 
     const handleOnSubmit = () => {
-        if(!playlistName){
-            onCloseModal();
-        }else{
-            onSubmit(playlistName);
-            setPlaylistName("");
+        if(playlistName === ""){
             onCloseModal();
         }
+        else{
+            setPlaylistName(playlistName)
+        }
+        // if(!playlistName){
+        //     onCloseModal();
+        // }else{
+        //     onSubmit(playlistName);
+        //     setPlaylistName("");
+        //     onCloseModal();
+        // }
     }
   return (
     <Modal visible={visible} animationType="fade" transparent>
@@ -21,13 +27,13 @@ export default function PlayListModalInput({visible, onCloseModal, onSubmit}) {
             <View style={styles.inputContainer}>
                 <Text style={{color:Theme.FONT}}>Create new Playlist</Text>
                 <TextInput 
-                value={playlistName} 
+                // value={playlistName} 
                 onchangeText={(text) => setPlaylistName(text)} 
                 style={styles.input}/>
                 <AntDesign
                  name='check' 
-                 size={24}
-                 color={Theme.ACTIVE_BG}
+                 size={50}
+                //  color={Theme.ACTIVE_BG}
                  style={styles.submitBtn}
                  onPress={handleOnSubmit}
                  />
@@ -63,6 +69,7 @@ const styles = StyleSheet.create({
         borderBottomColor:Theme.ACTIVE_BG,
         fontSize:18,
         paddingVertical:5,
+        backgroundColor:"rgba(0,0,0,0.2)"
 
     },
     submitBtn:{
